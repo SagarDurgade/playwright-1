@@ -19,6 +19,9 @@ export class amazonPage extends BasePage {
     this.page.getByPlaceholder('Search Amazon.in').clear
     await this.page.waitForTimeout(2000)
   }
+  async selectIphone() {
+    await this.page.locator("//*[contains(text(),'Apple iPhone 13')]").first().click()  
+  }
   async searchAndSelect(searchText: string) {
     await this.page.getByPlaceholder("Search Amazon.in").fill('iphone 13 128GB')
     await this.page.getByLabel('iphone 13 128GB').first().click()

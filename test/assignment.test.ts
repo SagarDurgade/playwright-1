@@ -22,16 +22,12 @@ test("test", async () => {
 
   // Select iphone and handel new tab
   const pagePromise = context.waitForEvent('page')
-  await page.locator("//*[contains(text(),'Apple iPhone 13')]").first().click()
+  pages.amazon.selectIphone()
   const newTab = await pagePromise
-
   const newPage = createPage(newTab)
 
   // Navigate to next tab and click on Visit the Apple Store
   newPage.amazonNewPage.visitTheAppleLinkStore
-
-
-  // Select apple watch 
   newPage.amazonNewPage.selectAppleWatch()
 
   // Verify same product is open
