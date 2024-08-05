@@ -1,34 +1,46 @@
 import { test, expect, chromium } from "@playwright/test";
 import { createPage } from "./amzon/app"
 
-test("test", async ({ page }) => {
-  // test.setTimeout(60000)
+test("test", async () => {
+  test.setTimeout(60000)
+  const browser = await chromium.launch()
+  const context = await browser.newContext()
+  const page = await context.newPage()
   const pages = createPage(page)
 
-  // Nevigare to amazon
-  pages.amazon.gotoUrl(testData.url)
+  // Go to url and verify title
+  pages.amazon.gotoUrlAndVerifyTitle(testData.url)
 
-  // The dropdown suggestions and validate all are related to searched product
+  // Select dropdown
+  pages.amazon.selectTheDepartment()
+
+  // Search text and verify dropdown
   pages.amazon.searchTextAndVerify(testData.search)
 
-  // Search and select IPhone 13 128 GB
+  // Search text and open first result
   pages.amazon.searchAndSelect(testData.seatchText)
 
-  // Navigate to next tab and click on Visit the Apple Store
-  const pagePromise = page.waitForEvent("popup")
+  // Select iphone and handel new tab
+  const pagePromise = context.waitForEvent('page')
   await page.locator("//*[contains(text(),'Apple iPhone 13')]").first().click()
-  const newPage = await pagePromise
+  const newTab = await pagePromise
 
-  await newPage.locator("//*[contains(text(),'Visit the Apple Store')]").click()
-  await newPage.getByRole("button", { name: "Apple Watch" }).click()
-  await newPage.getByRole("link", { name: "Apple Watch SE (GPS +" }).click()
-  await newPage.getByLabel("Quick look, Starlight Sport").first().click()
-  await expect(newPage.getByTestId("product-showcase-title")).toContainText(testData.verifyData)
+  const newPage = createPage(newTab)
+
+  // Navigate to next tab and click on Visit the Apple Store
+  newPage.amazonNewPage.visitTheAppleLinkStore
+
+
+  // Select apple watch 
+  newPage.amazonNewPage.selectAppleWatch()
+
+  // Verify same product is open
+  newPage.amazonNewPage.selectQuickLook(testData.watch)
 })
 
 const testData = {
   url: "https://www.amazon.in/",
   search: "iphone 13",
   seatchText: "iphone 13 128GB",
-  verifyData: "[GPS + Cellular 40 mm]",
+  watch: "[GPS + Cellular 40 mm]",
 }

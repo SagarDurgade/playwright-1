@@ -1,28 +1,28 @@
 import { BasePage, expect } from "./BasePage"
 
 export class amazonPage extends BasePage {
-
-  async gotoUrl(userName: string) {
-    await this.page.goto(userName)
-    await this.page.waitForLoadState()
+  async gotoUrlAndVerifyTitle(amazonUrl: string) {
+    await this.page.goto(amazonUrl);
+    expect(await this.page.title()).toContain("Amazon");
   }
 
-  async searchTextAndVerify(search:string)
-  {
+  async selectTheDepartment(){
     await this.page.getByLabel('Select the department you').selectOption('search-alias=electronics')
-    await this.page.getByPlaceholder('Search Amazon.in').fill(search)
-    const rows = this.page.locator("[class='left-pane-results-container'] [role='button']")
-    const count = await rows.count()
-    for (let i = 0; i < count; ++i)
-      await expect(rows.nth(i)).toContainText(search)
-    await this.page.getByPlaceholder('Search Amazon.in').clear()
   }
-  async searchAndSelect(searchText:string) {
-    await this.page.waitForTimeout(2000)
-    await this.page.getByPlaceholder("Search Amazon.in").fill(searchText)
-    await this.page.getByLabel(searchText).first().click()
-    await this.page.waitForTimeout(2000)
-  }
+
+  async searchTextAndVerify(search: string) {
+    await this.page.getByPlaceholder('Search Amazon.in').fill("iphone 13")
   
+    const rows = this.page.locator("[class='left-pane-results-container'] [role='button']")
+      for (let i = 0; i < await rows.count(); ++i)
+        await expect(rows.nth(i)).toContainText('iphone 13')
+    this.page.getByPlaceholder('Search Amazon.in').clear
+    await this.page.waitForTimeout(2000)
+  }
+  async searchAndSelect(searchText: string) {
+    await this.page.getByPlaceholder("Search Amazon.in").fill('iphone 13 128GB')
+    await this.page.getByLabel('iphone 13 128GB').first().click()
+    await this.page.waitForTimeout(2000)
+  }
 }
 
